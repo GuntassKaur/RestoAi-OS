@@ -102,6 +102,7 @@ export default function OrdersPage() {
   
   const [isWsConnected, setIsWsConnected] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeStage, setActiveStage] = useState('received'); // Mobile only
   const [newOrder, setNewOrder] = useState({ table_number: 1, items: [{ item_name: '', qty: 1, price: 0 }] });
 
   // --- WebSocket ---
@@ -192,12 +193,32 @@ export default function OrdersPage() {
         ))}
       </div>
 
+      {/* Mobile Stage Switcher */}
+      <div className="flex lg:hidden overflow-x-auto gap-2 pb-2 custom-scrollbar">
+        {STAGES.map((s) => (
+          <button
+            key={s.id}
+            onClick={() => setActiveStage(s.id)}
+            className={`flex-shrink-0 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
+              activeStage === s.id 
+                ? `bg-${s.color}-500/20 border-${s.color}-500/40 text-${s.color}-400` 
+                : 'bg-white/5 border-white/10 text-slate-500'
+            }`}
+          >
+            {s.label}
+          </button>
+        ))}
+      </div>
+
       {/* Kanban Board */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 h-full min-h-[600px]">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {STAGES.map((stage) => {
           const stageOrders = orders?.filter((o: any) => o.status === stage.id) || [];
           return (
-            <div key={stage.id} className="flex flex-col gap-4">
+            <div 
+              key={stage.id} 
+              className={`flex flex-col gap-4 ${activeStage !== stage.id ? 'hidden lg:flex' : 'flex'}`}
+            >
               <div className="flex items-center justify-between px-2">
                 <div className="flex items-center gap-2">
                   <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">{stage.label}</h3>
@@ -208,9 +229,16 @@ export default function OrdersPage() {
               
               <div className="flex-1 space-y-4 bg-white/[0.02] rounded-3xl p-3 border border-dashed border-white/5 min-h-[400px]">
                 <AnimatePresence>
-                  {stageOrders.map((order: any) => (
-                    <OrderCard key={order.id} order={order} onMove={handleMove} />
-                  ))}
+                  {stageOrders.length > 0 ? (
+                    stageOrders.map((order: any) => (
+                      <OrderCard key={order.id} order={order} onMove={handleMove} />
+                    ))
+                  ) : (
+                    <div className="h-full flex flex-col items-center justify-center opacity-20 py-20 grayscale">
+                       <ChefHat className="w-12 h-12 mb-2" />
+                       <p className="text-[10px] font-black uppercase">No Orders</p>
+                    </div>
+                  )}
                 </AnimatePresence>
               </div>
             </div>
