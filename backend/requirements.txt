@@ -6,7 +6,6 @@ pydantic
 pydantic-settings
 python-dotenv
 langgraph
-langchain-openai
 langchain-google-genai
 langchain-core
 pytest
