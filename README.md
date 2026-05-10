@@ -1,7 +1,7 @@
-# 🍽️ RestoAI OS
+# 🍽️ DINEVA OS
 > **Agentic Business OS for HoReCa (Hotels, Restaurants, Cafes)**
 
-![RestoAI OS Banner](https://via.placeholder.com/1200x400/0f172a/8b5cf6?text=RestoAI+OS)
+![DINEVA OS Banner](https://via.placeholder.com/1200x400/0f172a/8b5cf6?text=DINEVA+OS)
 
 An advanced, AI-powered operations dashboard that transforms how independent restaurant owners manage their business. Includes real-time pipeline monitoring, automated inventory tracking, full schedule management, and an integrated LangGraph-powered AI Agent.
 
@@ -49,7 +49,7 @@ Copy `.env.example` -> `.env`
 
 **Backend (`backend/.env`):**
 ```env
-DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/restoai
+DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/dineva
 OPENAI_API_KEY=sk-your-key-here
 SECRET_KEY=your-jwt-secret
 ```

@@ -29,7 +29,7 @@ export const mockInventory = [
 ];
 
 export const mockChatHistory = [
-  { role: "assistant", content: "System online. How can I assist with RestoAI OS today?" },
+  { role: "assistant", content: "System online. How can I assist with DINEVA OS today?" },
   { role: "user", content: "What is running low?" },
   { role: "assistant", content: "Scanning inventory... You are low on Organic Eggs. I have drafted a Purchase Order for 20 units. Shall I send it?" }
 ];

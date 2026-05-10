@@ -4,7 +4,7 @@ import useSWR from 'swr';
 import { Users, Clock, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
 
-const API_BASE = "http://localhost:8000/api";
+const API_BASE = "/api";
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 const Skeleton = ({ className }: { className?: string }) => (

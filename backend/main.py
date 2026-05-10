@@ -1,10 +1,16 @@
+print("Loading main.py...")
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+print("Importing database...")
 from database import engine, Base
+print("Importing routers...")
 from routers import inventory, orders, staff, reports, agent
+print("Importing manager...")
 from routers.orders import manager
 import uvicorn
 from contextlib import asynccontextmanager
+
+print("Defining lifespan...")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -13,7 +19,7 @@ async def lifespan(app: FastAPI):
         await conn.run_sync(Base.metadata.create_all)
     yield
 
-app = FastAPI(title="RestoAI OS API", lifespan=lifespan)
+app = FastAPI(title="DINEVA OS API", lifespan=lifespan)
 
 # CORS
 app.add_middleware(
@@ -21,7 +27,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "http://127.0.0.1:3000",
-        "https://restoai.vercel.app"
+        "https://dineva.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],

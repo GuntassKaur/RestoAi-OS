@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const API_BASE = "http://localhost:8000/api";
+const API_BASE = "/api";
 const WS_URL = "ws://localhost:8000/ws/orders";
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 

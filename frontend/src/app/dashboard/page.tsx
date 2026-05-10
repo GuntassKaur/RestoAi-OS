@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import useSWR from 'swr';
+import { motion } from 'framer-motion';
 import { 
   TrendingUp, 
   ShoppingCart, 
@@ -20,7 +21,7 @@ import {
   ResponsiveContainer 
 } from 'recharts';
 
-const API_BASE = "http://localhost:8000/api";
+const API_BASE = "/api";
 const fetcher = (url: string) => fetch(url).then(res => {
   if (!res.ok) throw new Error('Failed to fetch data');
   return res.json();
@@ -92,7 +93,7 @@ export default function DashboardPage() {
           <AlertTriangle className="w-8 h-8 text-rose-500" />
         </div>
         <h2 className="text-2xl font-bold text-white mb-2">Neural Link Failed</h2>
-        <p className="text-slate-400 mb-6 max-w-md">We couldn't establish a connection to the RestoAI backend. Please ensure the server is running on port 8000.</p>
+        <p className="text-slate-400 mb-6 max-w-md">We couldn't establish a connection to the DINEVA backend. Please ensure the server is running on port 8000.</p>
         <button 
           onClick={() => { mutateSummary(); window.location.reload(); }}
           className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-all flex items-center gap-2"
@@ -109,7 +110,7 @@ export default function DashboardPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-4xl font-extrabold text-white tracking-tight">Executive Dashboard</h1>
-          <p className="text-slate-400 mt-1 font-medium">Real-time operational awareness for RestoAI OS.</p>
+          <p className="text-slate-400 mt-1 font-medium">Real-time operational awareness for DINEVA OS.</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-xs font-mono text-slate-400">

@@ -19,7 +19,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/components/Toaster";
 
-const API_BASE = "http://localhost:8000/api";
+const API_BASE = "/api";
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 // --- Helper: Status logic ---
@@ -131,7 +131,7 @@ export default function InventoryPage() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "restoai_inventory.csv");
+    link.setAttribute("download", "dineva_inventory.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -296,7 +296,7 @@ export default function InventoryPage() {
                       </div>
                     </td>
                     <td className="px-6 py-6">
-                      <span className="text-slate-500 text-xs font-bold uppercase tracking-tighter">{item.supplier_name || 'RestoAI Direct'}</span>
+                      <span className="text-slate-500 text-xs font-bold uppercase tracking-tighter">{item.supplier_name || 'DINEVA Direct'}</span>
                     </td>
                     <td className="px-8 py-6 text-right">
                        <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">

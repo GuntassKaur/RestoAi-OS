@@ -109,7 +109,7 @@ async def seed_data():
                 db.add(oi)
 
         await db.commit()
-        print("RestoAI OS Database Seeded with Indian Restaurant Data!")
+        print("DINEVA OS Database Seeded with Indian Restaurant Data!")
 
 if __name__ == "__main__":
     asyncio.run(seed_data())

@@ -27,12 +27,12 @@ export default function AIAgentPage() {
 
   // Persistence
   useEffect(() => {
-    const saved = sessionStorage.getItem('restoai_chat');
+    const saved = sessionStorage.getItem('dineva_chat');
     if (saved) setMessages(JSON.parse(saved));
   }, []);
 
   useEffect(() => {
-    sessionStorage.setItem('restoai_chat', JSON.stringify(messages));
+    sessionStorage.setItem('dineva_chat', JSON.stringify(messages));
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
@@ -48,7 +48,7 @@ export default function AIAgentPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8000/api/agent/chat', {
+      const response = await fetch('/api/agent/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: text, history: messages }),
@@ -94,7 +94,7 @@ export default function AIAgentPage() {
 
   const clearChat = () => {
     setMessages([]);
-    sessionStorage.removeItem('restoai_chat');
+    sessionStorage.removeItem('dineva_chat');
   };
 
   const presets = [
@@ -156,7 +156,7 @@ export default function AIAgentPage() {
                 {m.role === 'user' ? (
                   <span className="text-[10px] font-black uppercase tracking-widest ml-auto">Operator</span>
                 ) : (
-                  <span className="text-[10px] font-black uppercase tracking-widest">RestoAI Insight</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest">DINEVA Insight</span>
                 )}
               </div>
               <div className="font-medium whitespace-pre-wrap">{m.content}</div>

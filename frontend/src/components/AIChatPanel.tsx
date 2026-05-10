@@ -32,7 +32,7 @@ export default function AIChatPanel() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8000/api/agent/chat', {
+      const response = await fetch('/api/agent/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: text, history: messages }),
@@ -163,7 +163,7 @@ export default function AIChatPanel() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-                  placeholder="Ask RestoAI..."
+                  placeholder="Ask DINEVA..."
                   className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-4 pr-12 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-blue-500/50 transition-all font-medium"
                 />
                 <button 

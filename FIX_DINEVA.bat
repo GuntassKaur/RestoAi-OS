@@ -1,5 +1,5 @@
 @echo off
-title RestoAI OS - Neural Repair System
+title DINEVA OS - Neural Repair System
 echo ==========================================
 echo    RESTOAI OS: AUTOMATED REPAIR TOOL
 echo ==========================================
@@ -31,13 +31,13 @@ call venv\Scripts\activate
 python -m pip install -r requirements.txt
 echo Seeding Operational Database...
 python seed.py
-start cmd /k "title RestoAI BACKEND && color 0b && echo RESTOAI BACKEND RUNNING ON PORT 8000 && venv\Scripts\python.exe -m uvicorn main:app --host 127.0.0.1 --port 8000"
+start cmd /k "title DINEVA BACKEND && color 0b && echo RESTOAI BACKEND RUNNING ON PORT 8000 && venv\Scripts\python.exe -m uvicorn main:app --host 127.0.0.1 --port 8000"
 
 echo [2/4] Initializing Frontend Neural Interface...
 cd ../frontend
 echo Installing UI dependencies...
 call npm.cmd install
-start cmd /k "title RestoAI FRONTEND && color 0a && echo RESTOAI FRONTEND RUNNING ON http://localhost:3000 && npm.cmd run dev"
+start cmd /k "title DINEVA FRONTEND && color 0a && echo RESTOAI FRONTEND RUNNING ON http://localhost:3000 && npm.cmd run dev"
 
 echo.
 echo ==========================================
