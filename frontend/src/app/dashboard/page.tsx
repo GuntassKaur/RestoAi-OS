@@ -1,335 +1,224 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import useSWR from 'swr';
-import { motion } from 'framer-motion';
+
+import { useState } from "react";
 import { 
-  TrendingUp, 
-  ShoppingCart, 
-  AlertTriangle, 
-  Users, 
-  RefreshCw, 
+  LogOut, 
+  Clock, 
+  ChevronRight, 
+  Search,
+  LayoutDashboard,
+  Settings,
+  Sparkles,
+  Users,
+  ChefHat,
+  UtensilsCrossed,
+  BarChart3,
+  TrendingUp,
+  Package,
+  Bell,
   ArrowUpRight,
-  MoreVertical
-} from 'lucide-react';
-import { 
-  AreaChart, 
-  Area, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer 
-} from 'recharts';
-
-const API_BASE = "/api";
-const fetcher = (url: string) => fetch(url).then(res => {
-  if (!res.ok) throw new Error('Failed to fetch data');
-  return res.json();
-});
-
-// --- Components ---
-
-const AnimatedNumber = ({ value }: { value: number }) => {
-  const [displayValue, setDisplayValue] = useState(0);
-
-  useEffect(() => {
-    let start = 0;
-    const end = value;
-    if (start === end) return;
-
-    let totalDuration = 1000;
-    let increment = end / (totalDuration / 16);
-    
-    const timer = setInterval(() => {
-      start += increment;
-      if (start >= end) {
-        setDisplayValue(end);
-        clearInterval(timer);
-      } else {
-        setDisplayValue(Math.floor(start));
-      }
-    }, 16);
-
-    return () => clearInterval(timer);
-  }, [value]);
-
-  return <span>{displayValue.toLocaleString('en-IN')}</span>;
-};
-
-const Skeleton = ({ className }: { className?: string }) => (
-  <div className={`animate-pulse bg-slate-700/50 rounded-xl ${className}`} />
-);
-
-const StatusBadge = ({ status }: { status: string }) => {
-  const styles: Record<string, string> = {
-    received: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-    preparing: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-    ready: "bg-purple-500/10 text-purple-400 border-purple-500/20",
-    served: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-  };
-  return (
-    <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium border ${styles[status] || "bg-slate-500/10 text-slate-400 border-slate-500/20"}`}>
-      {status}
-    </span>
-  );
-};
-
-// --- Page ---
+  TrendingDown,
+  History
+} from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
-  const { data: summary, error: summaryErr, mutate: mutateSummary } = useSWR(`${API_BASE}/reports/summary`, fetcher, { refreshInterval: 10000 });
-  const { data: lowStock, error: stockErr } = useSWR(`${API_BASE}/inventory/alerts`, fetcher);
-  const { data: revenueChart, error: chartErr } = useSWR(`${API_BASE}/reports/revenue?days=7`, fetcher);
-  const { data: recentOrders, error: ordersErr } = useSWR(`${API_BASE}/orders`, fetcher); // Backend doesn't have limit yet, but we'll slice
-  const { data: onDuty, error: dutyErr } = useSWR(`${API_BASE}/staff/on-duty`, fetcher);
+  const router = useRouter();
 
-  const isLoading = !summary || !lowStock || !revenueChart || !recentOrders || !onDuty;
-  const isError = summaryErr || stockErr || chartErr || ordersErr || dutyErr;
-
-  if (isError) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center">
-        <div className="w-16 h-16 bg-rose-500/10 rounded-full flex items-center justify-center mb-4 border border-rose-500/20">
-          <AlertTriangle className="w-8 h-8 text-rose-500" />
-        </div>
-        <h2 className="text-2xl font-bold text-white mb-2">Neural Link Failed</h2>
-        <p className="text-slate-400 mb-6 max-w-md">We couldn't establish a connection to the DINEVA backend. Please ensure the server is running on port 8000.</p>
-        <button 
-          onClick={() => { mutateSummary(); window.location.reload(); }}
-          className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-all flex items-center gap-2"
-        >
-          <RefreshCw className="w-4 h-4" /> Retry Connection
-        </button>
-      </div>
-    );
-  }
+  // Mock data for restaurant metrics
+  const stats = [
+    { label: "Today's Revenue", value: "₹42,890", change: "+12.5%", trend: "up", icon: TrendingUp, color: "text-emerald-400" },
+    { label: "Active Orders", value: "18", change: "+4", trend: "up", icon: UtensilsCrossed, color: "text-blue-400" },
+    { label: "Inventory Alerts", value: "3", change: "Critical", trend: "down", icon: Package, color: "text-orange-400" },
+    { label: "Staff on Duty", value: "12", change: "Full Team", trend: "up", icon: Users, color: "text-violet-400" },
+  ];
 
   return (
-    <div className="p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-4xl font-extrabold text-white tracking-tight">Executive Dashboard</h1>
-          <p className="text-slate-400 mt-1 font-medium">Real-time operational awareness for DINEVA OS.</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-xs font-mono text-slate-400">
-            SYSTEM STATUS: <span className="text-emerald-400">OPTIMAL</span>
+    <div className="min-h-screen bg-[#070b14] flex text-slate-50 font-sans selection:bg-[#4169E1]/30 selection:text-white">
+      
+      {/* Sidebar */}
+      <aside className="w-64 border-r border-white/5 bg-slate-900/50 backdrop-blur-xl flex flex-col hidden md:flex">
+        <div className="h-20 flex items-center px-6 border-b border-white/5">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#4169E1] to-[#7B68EE] flex items-center justify-center font-bold text-white shadow-lg shadow-[#4169E1]/20 mr-3">
+            <Sparkles size={20} />
           </div>
-        </div>
-      </div>
-
-      {/* Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* Revenue */}
-        <div className="glass-panel p-6 rounded-2xl relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-8 bg-emerald-500/10 blur-3xl rounded-full" />
-          <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
-              <TrendingUp className="w-6 h-6 text-emerald-400" />
-            </div>
-            <span className="text-xs font-bold text-emerald-400 flex items-center gap-1 bg-emerald-500/10 px-2 py-1 rounded-lg">
-              <ArrowUpRight className="w-3 h-3" /> 12%
-            </span>
-          </div>
-          <p className="text-slate-400 text-sm font-medium">Today's Revenue</p>
-          <h2 className="text-3xl font-bold text-white mt-1 font-mono">
-            {isLoading ? <Skeleton className="h-8 w-32" /> : <>₹<AnimatedNumber value={summary.today_revenue} /></>}
-          </h2>
+          <span className="font-bold text-white tracking-tight text-xl">DinevaAI <span className="text-[#4169E1]">OS</span></span>
         </div>
 
-        {/* Orders */}
-        <div className="glass-panel p-6 rounded-2xl relative overflow-hidden group">
-          <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-blue-500/10 rounded-xl border border-blue-500/20">
-              <ShoppingCart className="w-6 h-6 text-blue-400" />
-            </div>
-          </div>
-          <p className="text-slate-400 text-sm font-medium">Today's Orders</p>
-          <h2 className="text-3xl font-bold text-white mt-1 font-mono">
-            {isLoading ? <Skeleton className="h-8 w-24" /> : <AnimatedNumber value={summary.today_orders} />}
-          </h2>
-        </div>
-
-        {/* Low Stock */}
-        <div className="glass-panel p-6 rounded-2xl relative overflow-hidden group">
-          <div className="flex items-center justify-between mb-4">
-            <div className={`p-3 rounded-xl border ${summary?.low_stock_count > 0 ? "bg-rose-500/10 border-rose-500/20" : "bg-slate-500/10 border-slate-500/20"}`}>
-              <AlertTriangle className={`w-6 h-6 ${summary?.low_stock_count > 0 ? "text-rose-400" : "text-slate-400"}`} />
-            </div>
-            {summary?.low_stock_count > 0 && (
-              <span className="bg-rose-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md animate-bounce">CRITICAL</span>
-            )}
-          </div>
-          <p className="text-slate-400 text-sm font-medium">Low Stock Alerts</p>
-          <h2 className={`text-3xl font-bold mt-1 font-mono ${summary?.low_stock_count > 0 ? "text-rose-400" : "text-white"}`}>
-            {isLoading ? <Skeleton className="h-8 w-20" /> : <AnimatedNumber value={summary.low_stock_count} />}
-          </h2>
-        </div>
-
-        {/* Staff */}
-        <div className="glass-panel p-6 rounded-2xl relative overflow-hidden group">
-          <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-violet-500/10 rounded-xl border border-violet-500/20">
-              <Users className="w-6 h-6 text-violet-400" />
-            </div>
-          </div>
-          <p className="text-slate-400 text-sm font-medium">Staff On Duty</p>
-          <h2 className="text-3xl font-bold text-white mt-1 font-mono">
-            {isLoading ? <Skeleton className="h-8 w-20" /> : <AnimatedNumber value={onDuty.length} />}
-          </h2>
-        </div>
-      </div>
-
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Chart Column */}
-        <div className="lg:col-span-2 space-y-8">
-          <div className="glass-panel p-6 rounded-2xl">
-            <h3 className="text-lg font-bold text-white mb-6">Revenue Trend (Last 7 Days)</h3>
-            <div className="h-[350px] w-full">
-              {isLoading ? (
-                <Skeleton className="h-full w-full" />
-              ) : (
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={revenueChart}>
-                    <defs>
-                      <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0}/>
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" vertical={false} />
-                    <XAxis 
-                      dataKey="date" 
-                      stroke="#64748b" 
-                      fontSize={11} 
-                      tickLine={false} 
-                      axisLine={false}
-                      tickFormatter={(val) => new Date(val).toLocaleDateString('en-IN', { weekday: 'short' })}
-                    />
-                    <YAxis 
-                      stroke="#64748b" 
-                      fontSize={11} 
-                      tickLine={false} 
-                      axisLine={false}
-                      tickFormatter={(val) => `₹${val}`}
-                    />
-                    <Tooltip 
-                      contentStyle={{ backgroundColor: '#0F172A', border: '1px solid #1E293B', borderRadius: '12px' }}
-                      itemStyle={{ color: '#8B5CF6', fontWeight: 'bold' }}
-                    />
-                    <Area 
-                      type="monotone" 
-                      dataKey="revenue" 
-                      stroke="#8B5CF6" 
-                      strokeWidth={3}
-                      fillOpacity={1} 
-                      fill="url(#colorRev)" 
-                      animationDuration={800}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              )}
-            </div>
-          </div>
-
-          {/* Recent Orders Table */}
-          <div className="glass-panel rounded-2xl overflow-hidden">
-            <div className="p-6 border-b border-white/10 flex items-center justify-between">
-              <h3 className="text-lg font-bold text-white">Recent Transactions</h3>
-              <button className="text-xs font-bold text-blue-400 hover:text-blue-300">View All</button>
-            </div>
-            <div className="overflow-x-auto">
-              {isLoading ? (
-                <div className="p-6 space-y-4">
-                  {[1,2,3].map(i => <Skeleton key={i} className="h-12 w-full" />)}
-                </div>
-              ) : (
-                <table className="w-full text-left">
-                  <thead className="bg-white/[0.02] text-slate-500 text-xs uppercase tracking-widest font-bold">
-                    <tr>
-                      <th className="px-6 py-4">Order ID</th>
-                      <th className="px-6 py-4">Table</th>
-                      <th className="px-6 py-4">Total Amount</th>
-                      <th className="px-6 py-4">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-white/5">
-                    {recentOrders.slice(0, 5).map((order: any) => (
-                      <tr key={order.id} className="hover:bg-white/[0.02] transition-colors group">
-                        <td className="px-6 py-4 text-sm font-mono text-blue-400">#{order.id.toString().padStart(4, '0')}</td>
-                        <td className="px-6 py-4 text-sm font-medium text-white">Table {order.table_number || '--'}</td>
-                        <td className="px-6 py-4 text-sm font-bold text-emerald-400 font-mono">₹{order.total.toFixed(2)}</td>
-                        <td className="px-6 py-4">
-                          <StatusBadge status={order.status} />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-            </div>
+        <div className="flex-1 py-8 px-4 space-y-2">
+          <SidebarLink icon={<LayoutDashboard size={18} />} label="Overview" active />
+          <SidebarLink icon={<UtensilsCrossed size={18} />} label="Live Orders" />
+          <SidebarLink icon={<BarChart3 size={18} />} label="Analytics" />
+          <SidebarLink icon={<Package size={18} />} label="Inventory" />
+          <SidebarLink icon={<Users size={18} />} label="Staffing" />
+          <div className="pt-4 mt-4 border-t border-white/5">
+            <SidebarLink icon={<Sparkles size={18} />} label="AI Predictions" />
+            <SidebarLink icon={<History size={18} />} label="Order History" />
           </div>
         </div>
 
-        {/* Side Column */}
-        <div className="space-y-8">
-          {/* Low Stock Widget */}
-          <div className="glass-panel p-6 rounded-2xl">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold text-white">Inventory Risk</h3>
-              <RefreshCw className="w-4 h-4 text-slate-500 cursor-pointer hover:rotate-180 transition-transform duration-500" />
+        <div className="p-4 border-t border-white/5 bg-black/20">
+          <SidebarLink icon={<Settings size={18} />} label="Settings" />
+          <div className="mt-6 flex items-center justify-between px-3">
+            <div className="overflow-hidden">
+              <p className="text-sm font-bold text-white truncate">Guntass Kaur</p>
+              <p className="text-[10px] text-slate-500 truncate uppercase font-bold tracking-wider">Premium Admin</p>
             </div>
-            <div className="space-y-6">
-              {isLoading ? (
-                [1,2,3,4].map(i => <Skeleton key={i} className="h-16 w-full" />)
-              ) : lowStock.length === 0 ? (
-                <p className="text-center text-slate-500 py-8 text-sm">All inventory levels optimized.</p>
-              ) : (
-                lowStock.slice(0, 5).map((item: any) => {
-                  const percentage = (item.quantity / item.reorder_threshold) * 100;
-                  return (
-                    <div key={item.id} className="space-y-2">
-                      <div className="flex justify-between items-end">
-                        <div>
-                          <p className="text-sm font-bold text-white">{item.name}</p>
-                          <p className="text-[10px] text-slate-500 uppercase tracking-tighter">Threshold: {item.reorder_threshold} {item.unit}</p>
-                        </div>
-                        <span className="text-xs font-mono font-bold text-rose-400">{item.quantity} {item.unit}</span>
-                      </div>
-                      <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
-                        <motion.div 
-                          initial={{ width: 0 }}
-                          animate={{ width: `${Math.min(percentage, 100)}%` }}
-                          className={`h-full rounded-full ${percentage < 30 ? 'bg-rose-500' : percentage < 60 ? 'bg-amber-500' : 'bg-blue-500'}`}
-                        />
-                      </div>
+            <button className="p-2 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors">
+              <LogOut size={16} />
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col min-w-0 bg-[#070b14]">
+        
+        {/* Topbar */}
+        <header className="h-20 border-b border-white/5 bg-[#070b14]/50 backdrop-blur-md flex items-center justify-between px-10 sticky top-0 z-30">
+          <div className="text-left">
+            <h1 className="text-xl font-bold text-white">Neural Dashboard</h1>
+            <p className="text-xs text-slate-500">Sunday, 11 May 2026</p>
+          </div>
+          <div className="flex items-center gap-6">
+            <div className="relative hidden lg:block">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 w-4 h-4" />
+              <input 
+                type="text" 
+                placeholder="Search orders, staff, analytics..." 
+                className="w-80 h-10 bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 text-sm text-white placeholder:text-slate-500 outline-none focus:border-[#4169E1]/50 transition-all"
+              />
+            </div>
+            <button className="relative p-2.5 bg-white/5 border border-white/10 rounded-xl text-slate-400 hover:text-white transition-colors">
+              <Bell size={20} />
+              <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-[#070b14]" />
+            </button>
+          </div>
+        </header>
+
+        <div className="flex-1 p-10 overflow-y-auto">
+          <div className="max-w-7xl mx-auto space-y-10">
+            
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {stats.map((stat, i) => (
+                <div key={i} className="bg-white/5 backdrop-blur-xl rounded-[2rem] p-6 border border-white/5 hover:border-white/10 transition-all group relative overflow-hidden text-left">
+                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <stat.icon size={64} />
+                  </div>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className={`w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center ${stat.color} border border-white/5`}>
+                      <stat.icon size={20} />
                     </div>
-                  );
-                })
-              )}
+                    <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{stat.label}</span>
+                  </div>
+                  <div className="flex items-end justify-between">
+                    <h2 className="text-3xl font-black text-white">{stat.value}</h2>
+                    <div className={`flex items-center gap-1 text-xs font-bold ${stat.trend === 'up' ? 'text-emerald-400' : 'text-red-400'}`}>
+                      {stat.change} {stat.trend === 'up' ? <ArrowUpRight size={14} /> : <TrendingDown size={14} />}
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
-          </div>
 
-          {/* Quick Stats / Mini Card */}
-          <div className="bg-gradient-to-br from-indigo-600 to-violet-700 p-6 rounded-2xl shadow-xl border border-white/20 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
-            <BotIcon />
-            <h4 className="text-xl font-bold text-white mb-2 relative z-10">AI Operations Assistant</h4>
-            <p className="text-indigo-100/80 text-sm leading-relaxed relative z-10">I can automatically reorder low-stock items or analyze your peak selling hours. Just ask!</p>
-            <button className="mt-4 px-4 py-2 bg-white text-indigo-600 rounded-xl text-xs font-bold shadow-lg hover:shadow-white/20 transition-all relative z-10">Open Agent Core</button>
+            {/* Main Content Grid */}
+            <div className="grid grid-cols-12 gap-8">
+              
+              {/* Live Order Queue */}
+              <div className="col-span-12 lg:col-span-8 space-y-6">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                    <UtensilsCrossed size={18} className="text-[#4169E1]" /> Live Order Queue
+                  </h3>
+                  <button className="text-xs font-bold text-[#4169E1] hover:underline">View All Orders</button>
+                </div>
+                
+                <div className="space-y-4">
+                  {[1, 2, 3, 4].map((order) => (
+                    <div key={order} className="bg-white/5 backdrop-blur-xl rounded-2xl p-5 border border-white/5 hover:bg-white/[0.02] transition-colors flex items-center justify-between group cursor-pointer">
+                       <div className="flex items-center gap-6">
+                         <div className="w-14 h-14 rounded-2xl bg-white/5 flex flex-col items-center justify-center border border-white/5 group-hover:border-[#4169E1]/20 transition-all">
+                           <span className="text-xs text-slate-500 font-bold uppercase">Table</span>
+                           <span className="text-xl font-black text-white">0{order}</span>
+                         </div>
+                         <div className="text-left">
+                           <div className="flex items-center gap-3 mb-1">
+                             <h4 className="text-base font-bold text-white">Order #120{order}</h4>
+                             <span className="px-2 py-0.5 rounded-full bg-[#4169E1]/10 border border-[#4169E1]/20 text-[10px] font-bold text-[#4169E1] uppercase">Preparing</span>
+                           </div>
+                           <p className="text-xs text-slate-400">2x Grilled Salmon, 1x Caesar Salad, 3x Draft Beer</p>
+                         </div>
+                       </div>
+                       <div className="text-right">
+                         <p className="text-lg font-black text-white">₹2,450</p>
+                         <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider flex items-center gap-1 justify-end">
+                           <Clock size={10} /> 14m elapsed
+                         </p>
+                       </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* AI Insights & Alerts */}
+              <div className="col-span-12 lg:col-span-4 space-y-6">
+                 <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                  <Sparkles size={18} className="text-[#7B68EE]" /> AI Insights
+                </h3>
+                
+                <div className="space-y-4 text-left">
+                  <div className="bg-white/5 backdrop-blur-xl rounded-[2.5rem] p-6 border border-[#7B68EE]/20 bg-gradient-to-br from-[#7B68EE]/5 to-transparent relative overflow-hidden">
+                     <div className="absolute top-0 right-0 p-4 text-[#7B68EE] opacity-20">
+                       <TrendingUp size={40} />
+                     </div>
+                     <h4 className="text-sm font-bold text-white mb-2">Demand Spike Predicted</h4>
+                     <p className="text-xs text-slate-400 leading-relaxed mb-4">
+                       DinevaAI predicts a 40% surge in dinner bookings for tonight based on local events and historical trends.
+                     </p>
+                     <button className="text-[10px] font-bold uppercase tracking-widest text-[#7B68EE] hover:underline">Adjust Staffing →</button>
+                  </div>
+
+                  <div className="bg-white/5 backdrop-blur-xl rounded-[2.5rem] p-6 border border-orange-400/20 bg-gradient-to-br from-orange-400/5 to-transparent relative overflow-hidden">
+                     <div className="absolute top-0 right-0 p-4 text-orange-400 opacity-20">
+                       <Package size={40} />
+                     </div>
+                     <h4 className="text-sm font-bold text-white mb-2">Stock Critical Alert</h4>
+                     <p className="text-xs text-slate-400 leading-relaxed mb-4">
+                       Premium Wagyu Beef and Chilean Sea Bass are below safety thresholds.
+                     </p>
+                     <button className="text-[10px] font-bold uppercase tracking-widest text-orange-400 hover:underline">Auto-Reorder Now →</button>
+                  </div>
+
+                  <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/5 flex items-center justify-between hover:bg-white/[0.02] transition-all cursor-pointer group">
+                     <div className="flex items-center gap-4">
+                       <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-slate-400 group-hover:text-white transition-colors">
+                          <ChefHat size={20} />
+                       </div>
+                       <div>
+                          <h5 className="text-xs font-bold text-white">Chef Performance</h5>
+                          <p className="text-[10px] text-slate-500">Efficiency up 8%</p>
+                       </div>
+                     </div>
+                     <ChevronRight size={16} className="text-slate-600 group-hover:text-white" />
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
 
-function BotIcon() {
+function SidebarLink({ icon, label, active = false }: { icon: React.ReactNode, label: string, active?: boolean }) {
   return (
-    <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center mb-4 border border-white/30 backdrop-blur-sm relative z-10">
-      <RefreshCw className="w-6 h-6 text-white animate-spin-slow" />
-    </div>
+    <button className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-bold transition-all ${active ? 'bg-[#4169E1] text-white shadow-lg shadow-[#4169E1]/20' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}>
+      <span className={active ? 'text-white' : 'text-slate-500'}>{icon}</span>
+      {label}
+    </button>
   );
 }
